@@ -269,6 +269,55 @@ class BasicTypesTestsFromJSON: XCTestCase {
 #endif
 	}
 	
+	func testMappingNegativeIntegerToUnsignedFromJSON(){
+		// Negative JSON numbers must not silently bridge into UInt as huge positive values.
+		// Non-optional UInt fields fall back to 0; optional UInt fields stay nil.
+		let value: Int = -1
+		let json: [String: Any] = [
+			"uint": value,
+			"uintOpt": value,
+			"uintImp": value,
+
+			"uint8": value,
+			"uint8Opt": value,
+			"uint8Imp": value,
+
+			"uint16": value,
+			"uint16Opt": value,
+			"uint16Imp": value,
+
+			"uint32": value,
+			"uint32Opt": value,
+			"uint32Imp": value,
+
+			"uint64": value,
+			"uint64Opt": value,
+			"uint64Imp": value,
+		]
+		let mappedObject = mapper.map(JSON: json)
+		XCTAssertNotNil(mappedObject)
+
+		XCTAssertEqual(mappedObject?.uint, 0)
+		XCTAssertEqual(mappedObject?.uintOptional, nil)
+		XCTAssertEqual(mappedObject?.uintImplicityUnwrapped, nil)
+
+		XCTAssertEqual(mappedObject?.uint8, 0)
+		XCTAssertEqual(mappedObject?.uint8Optional, nil)
+		XCTAssertEqual(mappedObject?.uint8ImplicityUnwrapped, nil)
+
+		XCTAssertEqual(mappedObject?.uint16, 0)
+		XCTAssertEqual(mappedObject?.uint16Optional, nil)
+		XCTAssertEqual(mappedObject?.uint16ImplicityUnwrapped, nil)
+
+		XCTAssertEqual(mappedObject?.uint32, 0)
+		XCTAssertEqual(mappedObject?.uint32Optional, nil)
+		XCTAssertEqual(mappedObject?.uint32ImplicityUnwrapped, nil)
+
+		XCTAssertEqual(mappedObject?.uint64, 0)
+		XCTAssertEqual(mappedObject?.uint64Optional, nil)
+		XCTAssertEqual(mappedObject?.uint64ImplicityUnwrapped, nil)
+	}
+
 	func testMappingDoubleFromJSON(){
 		let value: Double = 11
 		let JSONString = "{\"double\" : \(value), \"doubleOpt\" : \(value), \"doubleImp\" : \(value)}"

@@ -151,6 +151,11 @@ private func toUnsignedInteger<T: UnsignedInteger>(_ value: Any?) -> T? {
 		return nil
 	}
 
+	// NSNumber's `uint64Value` reinterprets the bit pattern of negative inputs, so -1 silently becomes UInt64.max. Reject anything less than zero.
+	if number.compare(NSNumber(value: 0)) == .orderedAscending {
+		return nil
+	}
+
 	if T.self == UInt.self, let x = UInt(exactly: number.uint64Value) {
 		return T.init(x)
 	}
